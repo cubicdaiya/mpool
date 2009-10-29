@@ -16,6 +16,7 @@ mpool_t *mpool_create () {
 
 mpool_t *mpool_extend(mpool_t *p, size_t siz) {
   MPOOL_REALLOC(p->data, siz);
+  p->org = p->data;
   return p;
 }
 
@@ -24,7 +25,7 @@ mpool_data_t *mpool_palloc(mpool_t **p, size_t siz) {
   size_t usiz = pp->usiz + siz;
   size_t msiz = pp->msiz;
   if (usiz > msiz) {
-    mpool_extend(pp, usiz * 2);
+    pp = mpool_extend(pp, usiz * 2);
     pp->msiz = usiz * 2;
   }
   pp->usiz += siz;
