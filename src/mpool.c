@@ -64,6 +64,7 @@ mpool_data_t *mpool_palloc(mpool_t **p, size_t siz) {
     mpool_extend(pp, usiz * 2);
     pp->next->usiz = usiz;
     d = pp->next->begin;
+    pp->next->begin += siz;
     *p = pp->next;
   } else {
     pp->usiz = usiz;
