@@ -20,6 +20,7 @@ mpool_t *mpool_create (size_t siz) {
 
 void mpool_extend(mpool_t *p, size_t siz) {
   p->next = mpool_create(siz);
+  p->next->org = p->org;
 }
 
 mpool_data_t *mpool_palloc(mpool_t **p, size_t siz) {
@@ -30,10 +31,8 @@ mpool_data_t *mpool_palloc(mpool_t **p, size_t siz) {
   if (usiz > msiz) {
     mpool_extend(pp, usiz * 2);
     pp->next->usiz = usiz;
-    pp->next->org = pp->org;
-    pp = pp->next;
-    d = pp->begin;
-    *p = pp;
+    d = pp->next->begin;
+    *p = pp->next;
   } else {
     pp->usiz = usiz;
     pp->begin += siz;
