@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MPOOL_SIZE 72
+#define MPOOL_DEFAULT_SIZE 72
 
 #define MPOOL_MALLOC(p, siz)                    \
   do {                                          \
@@ -56,22 +56,25 @@
     (p) = NULL;                                 \
   } while(false)
 
-typedef void mpool_data_t;
+typedef void mpool_pool_t;
 
+/**
+ * memory pool structure
+ */
 typedef struct mpool_t {
-  mpool_data_t *data;
-  mpool_data_t *begin;
-  size_t usiz;
-  size_t msiz;
-  struct mpool_t *org;
-  struct mpool_t *next;
+  mpool_pool_t *pool;       // memory pool field
+  mpool_pool_t *begin;      // data for internal conduct
+  size_t usiz;              // used pool size of each pool
+  size_t msiz;              // max pool size of each pool
+  struct mpool_t *org;      // memory pool's head
+  struct mpool_t *next;     // next memory pool's pointer
 } mpool_t;
 
 mpool_t *mpool_create(size_t siz);
-mpool_data_t *mpool_palloc(mpool_t **p, size_t siz);
-void mpool_extend(mpool_t *p, size_t siz);
+mpool_pool_t *mpool_palloc(mpool_t **p, size_t siz);
 void mpool_destroy(mpool_t *p);
 
+static void mpool_extend(mpool_t *p, size_t siz);
 
 #endif
 
