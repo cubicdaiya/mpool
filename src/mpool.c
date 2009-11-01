@@ -3,42 +3,51 @@
 
 #include "mpool.h"
 
-mpool_t *mpool_create () {
+mpool_t *mpool_create (size_t siz) {
+  if (siz <= 0) {
+    siz = MPOOL_SIZE;
+  }
   mpool_t *p;
   MPOOL_MALLOC(p, sizeof(mpool_t));
-  MPOOL_MALLOC(p->data, MPOOL_SIZE);
+  MPOOL_MALLOC(p->data, siz);
   p->begin = p->data;
-  p->org   = p->data;
   p->usiz  = 0;
-  p->msiz  = MPOOL_SIZE;
+  p->msiz  = siz;
+  p->org   = p;
+  p->next  = NULL;
   return p;
 }
 
-mpool_t *mpool_extend(mpool_t *p, size_t siz) {
-  MPOOL_REALLOC(p->data, siz);
-  p->org = p->data;
-  return p;
+void mpool_extend(mpool_t *p, size_t siz) {
+  p->next = mpool_create(siz);
 }
 
 mpool_data_t *mpool_palloc(mpool_t **p, size_t siz) {
   mpool_t *pp = *p;
   size_t usiz = pp->usiz + siz;
   size_t msiz = pp->msiz;
-  if (usiz > msiz) {
-    pp = mpool_extend(pp, usiz * 2);
-    pp->msiz = usiz * 2;
-  }
-  pp->usiz += siz;
   mpool_data_t *d = pp->begin;
-  if (pp->data == pp->org) {
-    pp->begin += siz;
+  if (usiz > msiz) {
+    mpool_extend(pp, usiz * 2);
+    pp->next->usiz = usiz;
+    pp->next->org = pp->org;
+    pp = pp->next;
+    d = pp->begin;
+    *p = pp;
   } else {
-    pp->begin += siz + 1;
+    pp->usiz = usiz;
+    pp->begin += siz;
   }
   return d;
 }
 
-void mpool_destroy (mpool_t *p) {
-  MPOOL_FREE(p->org);
-  MPOOL_FREE(p);
+void mpool_destroy (mpool_t *pool) {
+  for (mpool_t *p=pool->org;p!=NULL;) {
+    mpool_t *current = p;
+    mpool_t *next    = p->next;
+    MPOOL_FREE(current->data);
+    MPOOL_FREE(current);
+    p = next;
+  }
+  //MPOOL_FREE(p);
 }
