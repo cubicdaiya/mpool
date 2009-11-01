@@ -35,6 +35,10 @@
 
 #include "mpool.h"
 
+/**
+ * private function
+ */
+static void mpool_extend(mpool_t *p, size_t siz);
 
 /**
  * create memory pool
@@ -87,6 +91,8 @@ void mpool_destroy (mpool_t *pool) {
     p = next;
   }
 }
+
+/* following is private function */ 
 
 /**
  * extend memory pool
