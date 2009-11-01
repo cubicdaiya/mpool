@@ -11,7 +11,7 @@ int main (int argc, char *argv[]) {
   char *s1 = NULL;
   char *s2 = NULL;
   const char *name[] = {"bokko", "cubicdaiya"};
-  pool = mpool_create();
+  pool = mpool_create(0);
   n    = mpool_palloc(&pool, sizeof(int));
   m    = mpool_palloc(&pool, sizeof(int));
   c    = mpool_palloc(&pool, sizeof(char));
