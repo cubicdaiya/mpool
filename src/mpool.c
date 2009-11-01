@@ -49,5 +49,4 @@ void mpool_destroy (mpool_t *pool) {
     MPOOL_FREE(current);
     p = next;
   }
-  //MPOOL_FREE(p);
 }
