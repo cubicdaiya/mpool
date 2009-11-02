@@ -66,7 +66,7 @@ typedef struct mpool_t {
   mpool_pool_t *begin;      // data for internal conduct
   size_t usiz;              // used pool size of each pool
   size_t msiz;              // max pool size of each pool
-  struct mpool_t *org;      // memory pool's head
+  struct mpool_t *head;     // memory pool's head
   struct mpool_t *next;     // next memory pool's pointer
 } mpool_t;
 

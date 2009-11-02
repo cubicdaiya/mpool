@@ -53,7 +53,7 @@ mpool_t *mpool_create (size_t siz) {
   p->begin = p->pool;
   p->usiz  = 0;
   p->msiz  = siz;
-  p->org   = p;
+  p->head  = p;
   p->next  = NULL;
   return p;
 }
@@ -83,7 +83,7 @@ mpool_pool_t *mpool_palloc(mpool_t **p, size_t siz) {
  * release all memory pool
  */
 void mpool_destroy (mpool_t *pool) {
-  for (mpool_t *p=pool->org;p!=NULL;) {
+  for (mpool_t *p=pool->head;p!=NULL;) {
     mpool_t *current = p;
     mpool_t *next    = p->next;
     MPOOL_FREE(current->pool);
@@ -99,7 +99,7 @@ void mpool_destroy (mpool_t *pool) {
  */
 static void mpool_extend(mpool_t *p, size_t siz) {
   p->next = mpool_create(siz);
-  p->next->org = p->org;
+  p->next->head = p->head;
 }
 
 
