@@ -1,2 +1,4 @@
 example
 *.o
+*.so
+*.a
