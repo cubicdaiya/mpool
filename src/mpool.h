@@ -71,7 +71,7 @@ typedef struct mpool_t {
 } mpool_t;
 
 mpool_t *mpool_create(size_t siz);
-mpool_pool_t *mpool_palloc(mpool_t **p, size_t siz);
+mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz);
 void mpool_destroy(mpool_t *p);
 
 #endif

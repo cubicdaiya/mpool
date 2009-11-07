@@ -61,7 +61,7 @@ mpool_t *mpool_create (size_t siz) {
 /**
  * allocate memory from memory pool
  */
-mpool_pool_t *mpool_palloc(mpool_t **p, size_t siz) {
+mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz) {
   mpool_t *pp = *p;
   size_t usiz = pp->usiz + siz;
   size_t msiz = pp->msiz;
