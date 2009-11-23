@@ -18,6 +18,6 @@ example : $(OBJS) $(STATIC_LFILE)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(STATIC_LFILE)
 
 clean :
-	rm $(ALL_OBJS) $(OBJS) $(STATIC_LFILE) $(MPOOL_OBJS)
+	rm $(ALL_OBJS) $(OBJS) 
 
 example.o : example.c ../src/mpool.c ../src/mpool.h
