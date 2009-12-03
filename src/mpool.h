@@ -56,7 +56,7 @@
     (p) = NULL;                                 \
   } while(false)
 
-typedef void mpool_pool_t;
+typedef char mpool_pool_t;
 
 /**
  * memory pool structure
