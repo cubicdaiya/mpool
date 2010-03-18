@@ -12,8 +12,8 @@ int main (int argc, char *argv[]) {
   char *s2 = NULL;
   const char *name[] = {"bokko", "cubicdaiya"};
   pool = mpool_create(0);
-  n    = mpool_alloc(&pool, sizeof(int));
-  m    = mpool_alloc(&pool, sizeof(int));
+  n    = (int *) mpool_alloc(&pool, sizeof(int));
+  m    = (int *) mpool_alloc(&pool, sizeof(int));
   c    = mpool_alloc(&pool, sizeof(char));
   s1   = mpool_alloc(&pool, strlen(name[0]) + 1);
   s2   = mpool_alloc(&pool, strlen(name[1]) + 1);
