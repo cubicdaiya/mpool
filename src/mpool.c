@@ -1,7 +1,7 @@
 /**
  In short, mpool is distributed under so called "BSD license",
  
- Copyright (c) 2009 Tatsuhiko Kubo <cubicdaiya@gmail.com>
+ Copyright (c) 2009-2010 Tatsuhiko Kubo <cubicdaiya@gmail.com>
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,7 @@
  * private function
  */
 static void mpool_extend(mpool_t *p, size_t siz);
+static size_t mpool_align(size_t siz);
 
 /**
  * create memory pool
@@ -46,6 +47,8 @@ static void mpool_extend(mpool_t *p, size_t siz);
 mpool_t *mpool_create (size_t siz) {
   if (siz <= 0) {
     siz = MPOOL_DEFAULT_SIZE;
+  } else {
+    siz = mpool_align(siz);
   }
   mpool_t *p;
   MPOOL_MALLOC(p, sizeof(mpool_t));
@@ -63,7 +66,7 @@ mpool_t *mpool_create (size_t siz) {
  */
 mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz) {
   mpool_t *pp = *p;
-  size_t usiz = pp->usiz + siz;
+  size_t usiz = mpool_align(pp->usiz + siz);
   size_t msiz = pp->msiz;
   mpool_pool_t *d = pp->begin;
   if (usiz > msiz) {
@@ -76,6 +79,7 @@ mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz) {
     pp->usiz = usiz;
     pp->begin += siz;
   }
+  
   return d;
 }
 
@@ -102,4 +106,19 @@ static void mpool_extend(mpool_t *p, size_t siz) {
   p->next->head = p->head;
 }
 
+/**
+ * align byte boundary
+ */
+static size_t mpool_align(size_t siz) {
+  size_t siz_padding = siz % MPOOL_ALIGN_SIZE;
+  size_t siz_aligned;
+  if (siz_padding == 0) {
+    siz_aligned = siz;
+  } else if (siz == siz_padding) {
+    siz_aligned = MPOOL_ALIGN_SIZE;
+  } else {
+    siz_aligned = siz + siz_padding;
+  }
+  return siz_aligned;
+}
 

@@ -1,7 +1,7 @@
 /**
  In short, mpool is distributed under so called "BSD license",
  
- Copyright (c) 2009 Tatsuhiko Kubo <cubicdaiya@gmail.com>
+ Copyright (c) 2009-2010 Tatsuhiko Kubo <cubicdaiya@gmail.com>
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification,
@@ -41,6 +41,7 @@
 #include <stdbool.h>
 
 #define MPOOL_DEFAULT_SIZE 72
+#define MPOOL_ALIGN_SIZE 8
 
 #define MPOOL_MALLOC(p, siz)                    \
   do {                                          \
