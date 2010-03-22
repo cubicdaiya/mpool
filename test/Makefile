@@ -1,23 +1,25 @@
 
+VPATH = ../
+
 CC = gcc
 CFLAGS = -Wall -g -std=c99
+LFLAGS = -lcunit
 IFLAGS = -I..
-STATIC_LFILE = ../libmpool.a
-ALL_OBJS = mpool_test
-OBJS = mpool_test.o
-MPOOL_OBJS = ../mpool.o
+TARGETS = mpool_test
+OBJS = mpool_test.o mpool.o
 
 .c.o:
-	cd .. && $(MAKE)
 	$(CC) $(CFLAGS) $(IFLAGS) -c $<
 
-all : $(ALL_OBJS)
+all : $(TARGETS)
 
+mpool_test : $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LFLAGS)
 
-mpool_test : $(OBJS) $(STATIC_LFILE)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(STATIC_LFILE)
+check : $(OBJS)
+	@./mpool_test
 
 clean :
-	rm $(ALL_OBJS) $(OBJS) 
+	rm $(TARGETS) $(OBJS) 
 
 mpool_test.o : mpool_test.c ../mpool.c ../mpool.h

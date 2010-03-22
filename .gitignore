@@ -1,4 +1,4 @@
-example
 *.o
 *.so
 *.a
+test/mpool_test
