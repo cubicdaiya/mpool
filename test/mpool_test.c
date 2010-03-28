@@ -154,13 +154,17 @@ static void mpool_test005(void){
   } st_t;
   
   st_t *st;
+  int *n;
   st = mpool_alloc(&pool, sizeof(*st));
+  n  = mpool_alloc(&pool, sizeof(*n));
   
   st->n = 5;
   st->c = 'a';
+  *n     = 10;
 
   CU_ASSERT(st->n == 5);
   CU_ASSERT(st->c == 'a');
+  CU_ASSERT(*n     == 10);
   
   mpool_destroy(pool);
 }
