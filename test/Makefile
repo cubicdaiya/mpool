@@ -16,7 +16,7 @@ all : $(TARGETS)
 mpool_test : $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LFLAGS)
 
-check : $(OBJS)
+check : mpool_test
 	@./mpool_test
 
 clean :
