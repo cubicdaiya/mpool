@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include <sys/types.h>
 #include <time.h>
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 #include <mpool.h>
+
+#define IS_ALIGNED(ptr) ((uintptr_t)(ptr) % (MPOOL_ALIGN_SIZE) == 0)
 
 static void mpool_test001(void);
 static void mpool_test002(void);
@@ -20,11 +24,12 @@ static void mpool_test001(void){
     c = mpool_alloc(&pool, sizeof(*c));
     *c = 'a';
     CU_ASSERT(*c == 'a');
+    CU_ASSERT(IS_ALIGNED(c));
     mpool_destroy(pool);
 }
 
 static void mpool_test002(void){
-    mpool_t *pool = mpool_create(1);
+    mpool_t *pool = mpool_create(0);
     char *c1;
     char *c2;
     char *c3;
@@ -45,6 +50,13 @@ static void mpool_test002(void){
     CU_ASSERT(*c3 == 'c');
     CU_ASSERT(*c4 == 'd');
     CU_ASSERT(*c5 == 'e');
+
+    CU_ASSERT(IS_ALIGNED(c1));
+    CU_ASSERT(IS_ALIGNED(c2));
+    CU_ASSERT(IS_ALIGNED(c3));
+    CU_ASSERT(IS_ALIGNED(c4));
+    CU_ASSERT(IS_ALIGNED(c5));
+
     mpool_destroy(pool);
 }
 
@@ -125,7 +137,26 @@ static void mpool_test003(void){
     CU_ASSERT(*ipt == 33);
     CU_ASSERT(*siz == 55);
     CU_ASSERT(*pdt == 150);
-    
+
+    CU_ASSERT(IS_ALIGNED(b));
+    CU_ASSERT(IS_ALIGNED(s));
+    CU_ASSERT(IS_ALIGNED(c));
+    CU_ASSERT(IS_ALIGNED(uc));
+    CU_ASSERT(IS_ALIGNED(n));
+    CU_ASSERT(IS_ALIGNED(un));
+    CU_ASSERT(IS_ALIGNED(l));
+    CU_ASSERT(IS_ALIGNED(ul));
+    CU_ASSERT(IS_ALIGNED(ll));
+    CU_ASSERT(IS_ALIGNED(ull));
+    CU_ASSERT(IS_ALIGNED(f));
+    CU_ASSERT(IS_ALIGNED(d));
+    CU_ASSERT(IS_ALIGNED(ld));
+    CU_ASSERT(IS_ALIGNED(t));
+    CU_ASSERT(IS_ALIGNED(ot));
+    CU_ASSERT(IS_ALIGNED(ipt));
+    CU_ASSERT(IS_ALIGNED(siz));
+    CU_ASSERT(IS_ALIGNED(pdt));
+
     mpool_destroy(pool);
 }
 
@@ -141,6 +172,8 @@ static void mpool_test004(void){
     strcpy(s2, cs[1]);
     CU_ASSERT(strncmp(s1, cs[0], strlen(s1)) == 0);
     CU_ASSERT(strncmp(s2, cs[1], strlen(s2)) == 0);
+    CU_ASSERT(IS_ALIGNED(s1));
+    CU_ASSERT(IS_ALIGNED(s2));
     
     mpool_destroy(pool);
 }
@@ -160,11 +193,14 @@ static void mpool_test005(void){
     
     st->n = 5;
     st->c = 'a';
-    *n     = 10;
+    *n    = 10;
     
     CU_ASSERT(st->n == 5);
     CU_ASSERT(st->c == 'a');
-    CU_ASSERT(*n     == 10);
+    CU_ASSERT(*n    == 10);
+
+    CU_ASSERT(IS_ALIGNED(st));
+    CU_ASSERT(IS_ALIGNED(n));
     
     mpool_destroy(pool);
 }

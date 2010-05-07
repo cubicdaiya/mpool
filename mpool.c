@@ -77,7 +77,7 @@ mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz) {
         *p = pp->next;
     } else {
         pp->usiz = usiz;
-        pp->begin += siz;
+        pp->begin += mpool_align(siz);
     }
     
     return d;
@@ -101,7 +101,7 @@ void mpool_destroy (mpool_t *pool) {
 /**
  * extend memory pool
  */
-static void mpool_extend(mpool_t *p, size_t siz) {
+static inline void mpool_extend(mpool_t *p, size_t siz) {
     p->next = mpool_create(siz);
     p->next->head = p->head;
 }
@@ -109,16 +109,7 @@ static void mpool_extend(mpool_t *p, size_t siz) {
 /**
  * align byte boundary
  */
-static size_t mpool_align(size_t siz) {
-    size_t siz_padding = siz % MPOOL_ALIGN_SIZE;
-    size_t siz_aligned;
-    if (siz_padding == 0) {
-        siz_aligned = siz;
-    } else if (siz == siz_padding) {
-        siz_aligned = MPOOL_ALIGN_SIZE;
-    } else {
-        siz_aligned = siz + siz_padding;
-    }
-    return siz_aligned;
+static inline size_t mpool_align(size_t siz) {
+    return (siz + (MPOOL_ALIGN_SIZE - 1)) & ~(MPOOL_ALIGN_SIZE - 1);
 }
 
