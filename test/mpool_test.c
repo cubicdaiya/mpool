@@ -99,9 +99,9 @@ static void mpool_test003(void){
     ld  = mpool_alloc(&pool, sizeof(*ld),  &manager);
     t   = mpool_alloc(&pool, sizeof(*t),   &manager);
     ot  = mpool_alloc(&pool, sizeof(*ot),  &manager);
-    ipt = mpool_alloc(&pool, sizeof(*ipt),  &manager);
-    siz = mpool_alloc(&pool, sizeof(*siz),  &manager);
-    pdt = mpool_alloc(&pool, sizeof(*pdt),  &manager);
+    ipt = mpool_alloc(&pool, sizeof(*ipt), &manager);
+    siz = mpool_alloc(&pool, sizeof(*siz), &manager);
+    pdt = mpool_alloc(&pool, sizeof(*pdt), &manager);
     
     *b   = true;
     *s   = 2;
