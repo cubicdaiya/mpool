@@ -2,3 +2,7 @@
 *.so
 *.a
 test/mpool_test
+GPATH
+GTAGS
+GRTAGS
+GSYMS
