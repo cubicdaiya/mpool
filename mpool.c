@@ -40,16 +40,13 @@
  */
 static inline void mpool_extend(mpool_t *p, size_t siz, mpool_manager_t *manager);
 static inline size_t mpool_align(size_t siz);
+static inline size_t mpool_decide_create_siz(size_t siz);
 
 /**
  * create memory pool
  */
 mpool_t *mpool_create (size_t siz, mpool_manager_t *manager) {
-    if (siz <= 0) {
-        siz = MPOOL_POOL_SIZ;
-    } else {
-        siz = mpool_align(siz);
-    }
+    siz = mpool_decide_create_siz(siz);
     mpool_t *p;
     MPOOL_MALLOC(p, sizeof(mpool_t));
     MPOOL_MALLOC(p->pool, siz);
@@ -104,11 +101,7 @@ void mpool_destroy (mpool_manager_t *manager) {
  * extend memory pool
  */
 static inline void mpool_extend(mpool_t *p, size_t siz, mpool_manager_t *manager) {
-    if (siz <= 0) {
-        siz = MPOOL_POOL_SIZ;
-    } else {
-        siz = mpool_align(siz);
-    }
+    siz = mpool_decide_create_siz(siz);
     mpool_t *pp;
     MPOOL_MALLOC(pp, sizeof(mpool_t));
     MPOOL_MALLOC(pp->pool, siz);
@@ -124,5 +117,18 @@ static inline void mpool_extend(mpool_t *p, size_t siz, mpool_manager_t *manager
  */
 static inline size_t mpool_align(size_t siz) {
     return (siz + (MPOOL_ALIGN_SIZE - 1)) & ~(MPOOL_ALIGN_SIZE - 1);
+}
+
+/**
+ * detect mpool size
+ */
+static inline size_t mpool_decide_create_siz(size_t siz) {
+    size_t ret;
+    if (siz <= 0) {
+        ret = MPOOL_POOL_SIZ;
+    } else {
+        ret = mpool_align(siz);
+    }
+    return ret;
 }
 
