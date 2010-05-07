@@ -19,27 +19,29 @@ static void mpool_test004(void);
 static void mpool_test005(void);
 
 static void mpool_test001(void){
-    mpool_t *pool = mpool_create(0);
+    mpool_manager_t manager;
+    mpool_t *pool = mpool_create(0, &manager);
     char *c;
-    c = mpool_alloc(&pool, sizeof(*c));
+    c = mpool_alloc(&pool, sizeof(*c), &manager);
     *c = 'a';
     CU_ASSERT(*c == 'a');
     CU_ASSERT(IS_ALIGNED(c));
-    mpool_destroy(pool);
+    mpool_destroy(&manager);
 }
 
 static void mpool_test002(void){
-    mpool_t *pool = mpool_create(0);
+    mpool_manager_t manager;
+    mpool_t *pool = mpool_create(0, &manager);
     char *c1;
     char *c2;
     char *c3;
     char *c4;
     char *c5;
-    c1 = mpool_alloc(&pool, sizeof(*c1));
-    c2 = mpool_alloc(&pool, sizeof(*c2));
-    c3 = mpool_alloc(&pool, sizeof(*c3));
-    c4 = mpool_alloc(&pool, sizeof(*c4));
-    c5 = mpool_alloc(&pool, sizeof(*c5));
+    c1 = mpool_alloc(&pool, sizeof(*c1), &manager);
+    c2 = mpool_alloc(&pool, sizeof(*c2), &manager);
+    c3 = mpool_alloc(&pool, sizeof(*c3), &manager);
+    c4 = mpool_alloc(&pool, sizeof(*c4), &manager);
+    c5 = mpool_alloc(&pool, sizeof(*c5), &manager);
     *c1 = 'a';
     *c2 = 'b';
     *c3 = 'c';
@@ -57,11 +59,12 @@ static void mpool_test002(void){
     CU_ASSERT(IS_ALIGNED(c4));
     CU_ASSERT(IS_ALIGNED(c5));
 
-    mpool_destroy(pool);
+    mpool_destroy(&manager);
 }
 
 static void mpool_test003(void){
-    mpool_t *pool = mpool_create(0);
+    mpool_manager_t manager;
+    mpool_t *pool = mpool_create(0, &manager);
     bool               *b;
     short              *s;
     char               *c;
@@ -81,24 +84,24 @@ static void mpool_test003(void){
     size_t             *siz;
     ptrdiff_t          *pdt;
     
-    b   = mpool_alloc(&pool, sizeof(*b));
-    s   = mpool_alloc(&pool, sizeof(*s));
-    c   = mpool_alloc(&pool, sizeof(*c));
-    uc  = mpool_alloc(&pool, sizeof(*uc));
-    n   = mpool_alloc(&pool, sizeof(*n));
-    un  = mpool_alloc(&pool, sizeof(*un));
-    l   = mpool_alloc(&pool, sizeof(*l));
-    ul  = mpool_alloc(&pool, sizeof(*ul));
-    ll  = mpool_alloc(&pool, sizeof(*ll));
-    ull = mpool_alloc(&pool, sizeof(*ull));
-    f   = mpool_alloc(&pool, sizeof(*f));
-    d   = mpool_alloc(&pool, sizeof(*d));
-    ld  = mpool_alloc(&pool, sizeof(*ld));
-    t   = mpool_alloc(&pool, sizeof(*t));
-    ot  = mpool_alloc(&pool, sizeof(*ot));
-    ipt = mpool_alloc(&pool, sizeof(*ipt));
-    siz = mpool_alloc(&pool, sizeof(*siz));
-    pdt = mpool_alloc(&pool, sizeof(*pdt));
+    b   = mpool_alloc(&pool, sizeof(*b),   &manager);
+    s   = mpool_alloc(&pool, sizeof(*s),   &manager);
+    c   = mpool_alloc(&pool, sizeof(*c),   &manager);
+    uc  = mpool_alloc(&pool, sizeof(*uc),  &manager);
+    n   = mpool_alloc(&pool, sizeof(*n),   &manager);
+    un  = mpool_alloc(&pool, sizeof(*un),  &manager);
+    l   = mpool_alloc(&pool, sizeof(*l),   &manager);
+    ul  = mpool_alloc(&pool, sizeof(*ul),  &manager);
+    ll  = mpool_alloc(&pool, sizeof(*ll),  &manager);
+    ull = mpool_alloc(&pool, sizeof(*ull), &manager);
+    f   = mpool_alloc(&pool, sizeof(*f),   &manager);
+    d   = mpool_alloc(&pool, sizeof(*d),   &manager);
+    ld  = mpool_alloc(&pool, sizeof(*ld),  &manager);
+    t   = mpool_alloc(&pool, sizeof(*t),   &manager);
+    ot  = mpool_alloc(&pool, sizeof(*ot),  &manager);
+    ipt = mpool_alloc(&pool, sizeof(*ipt),  &manager);
+    siz = mpool_alloc(&pool, sizeof(*siz),  &manager);
+    pdt = mpool_alloc(&pool, sizeof(*pdt),  &manager);
     
     *b   = true;
     *s   = 2;
@@ -157,17 +160,18 @@ static void mpool_test003(void){
     CU_ASSERT(IS_ALIGNED(siz));
     CU_ASSERT(IS_ALIGNED(pdt));
 
-    mpool_destroy(pool);
+    mpool_destroy(&manager);
 }
 
 static void mpool_test004(void){
-    mpool_t *pool = mpool_create(13);
+    mpool_manager_t manager;
+    mpool_t *pool = mpool_create(10, &manager);
     const char *cs[] = {"cubicdaiya", "bokko"};
     char *s1;
     char *s2;
     
-    s1 = mpool_alloc(&pool, strlen(cs[0]) + 1);
-    s2 = mpool_alloc(&pool, strlen(cs[1]) + 1);
+    s1 = mpool_alloc(&pool, strlen(cs[0]) + 1, &manager);
+    s2 = mpool_alloc(&pool, strlen(cs[1]) + 1, &manager);
     strcpy(s1, cs[0]);
     strcpy(s2, cs[1]);
     CU_ASSERT(strncmp(s1, cs[0], strlen(s1)) == 0);
@@ -175,11 +179,12 @@ static void mpool_test004(void){
     CU_ASSERT(IS_ALIGNED(s1));
     CU_ASSERT(IS_ALIGNED(s2));
     
-    mpool_destroy(pool);
+    mpool_destroy(&manager);
 }
 
 static void mpool_test005(void){
-    mpool_t *pool = mpool_create(2);
+    mpool_manager_t manager;
+    mpool_t *pool = mpool_create(2, &manager);
     
     typedef struct st_s {
         int  n;
@@ -188,8 +193,8 @@ static void mpool_test005(void){
     
     st_t *st;
     int *n;
-    st = mpool_alloc(&pool, sizeof(*st));
-    n  = mpool_alloc(&pool, sizeof(*n));
+    st = mpool_alloc(&pool, sizeof(*st), &manager);
+    n  = mpool_alloc(&pool, sizeof(*n), &manager);
     
     st->n = 5;
     st->c = 'a';
@@ -202,7 +207,7 @@ static void mpool_test005(void){
     CU_ASSERT(IS_ALIGNED(st));
     CU_ASSERT(IS_ALIGNED(n));
     
-    mpool_destroy(pool);
+    mpool_destroy(&manager);
 }
 
 int main (int argc, char *argv[]) {

@@ -38,46 +38,48 @@
 /**
  * private function
  */
-static void mpool_extend(mpool_t *p, size_t siz);
-static size_t mpool_align(size_t siz);
+static inline void mpool_extend(mpool_t *p, size_t siz, mpool_manager_t *manager);
+static inline size_t mpool_align(size_t siz);
 
 /**
  * create memory pool
  */
-mpool_t *mpool_create (size_t siz) {
+mpool_t *mpool_create (size_t siz, mpool_manager_t *manager) {
     if (siz <= 0) {
-        siz = MPOOL_DEFAULT_SIZE;
+        siz = MPOOL_POOL_SIZ;
     } else {
         siz = mpool_align(siz);
     }
     mpool_t *p;
     MPOOL_MALLOC(p, sizeof(mpool_t));
     MPOOL_MALLOC(p->pool, siz);
-    p->begin = p->pool;
-    p->usiz  = 0;
-    p->msiz  = siz;
-    p->head  = p;
-    p->next  = NULL;
+    p->next = NULL;
+
+    manager->begin = p->pool;
+    manager->head  = p;
+    manager->usiz  = 0;
+    manager->msiz  = siz;
+    
     return p;
 }
 
 /**
  * allocate memory from memory pool
  */
-mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz) {
+mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz, mpool_manager_t *manager) {
     mpool_t *pp = *p;
-    size_t usiz = mpool_align(pp->usiz + siz);
-    size_t msiz = pp->msiz;
-    mpool_pool_t *d = pp->begin;
+    size_t usiz = mpool_align(manager->usiz + siz);
+    size_t msiz = manager->msiz;
+    mpool_pool_t *d = manager->begin;
     if (usiz > msiz) {
-        mpool_extend(pp, usiz * 2);
-        pp->next->usiz = usiz;
-        d = pp->next->begin;
-        pp->next->begin += siz;
+        mpool_extend(pp, usiz * 2, manager);
+        manager->usiz = usiz;
+        d = manager->begin;
+        manager->begin += mpool_align(siz);
         *p = pp->next;
     } else {
-        pp->usiz = usiz;
-        pp->begin += mpool_align(siz);
+        manager->usiz = usiz;
+        manager->begin += mpool_align(siz);
     }
     
     return d;
@@ -86,8 +88,8 @@ mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz) {
 /**
  * release all memory pool
  */
-void mpool_destroy (mpool_t *pool) {
-    for (mpool_t *p=pool->head;p!=NULL;) {
+void mpool_destroy (mpool_manager_t *manager) {
+    for (mpool_t *p=manager->head;p!=NULL;) {
         mpool_t *current = p;
         mpool_t *next    = p->next;
         MPOOL_FREE(current->pool);
@@ -101,9 +103,20 @@ void mpool_destroy (mpool_t *pool) {
 /**
  * extend memory pool
  */
-static inline void mpool_extend(mpool_t *p, size_t siz) {
-    p->next = mpool_create(siz);
-    p->next->head = p->head;
+static inline void mpool_extend(mpool_t *p, size_t siz, mpool_manager_t *manager) {
+    if (siz <= 0) {
+        siz = MPOOL_POOL_SIZ;
+    } else {
+        siz = mpool_align(siz);
+    }
+    mpool_t *pp;
+    MPOOL_MALLOC(pp, sizeof(mpool_t));
+    MPOOL_MALLOC(pp->pool, siz);
+    pp->next = NULL;
+
+    p->next = pp;
+
+    manager->begin = pp->pool;
 }
 
 /**

@@ -40,8 +40,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MPOOL_DEFAULT_SIZE 72
-#define MPOOL_ALIGN_SIZE 8
+#define MPOOL_POOL_SIZ (64 * 1024)
+#define MPOOL_ALIGN_SIZE   (8)
 
 #define MPOOL_MALLOC(p, siz)                    \
     do {                                        \
@@ -63,17 +63,20 @@ typedef void mpool_pool_t;
  * memory pool structure
  */
 typedef struct mpool_t {
-    mpool_pool_t *pool;       // memory pool field
-    mpool_pool_t *begin;      // data for internal conduct
-    size_t usiz;              // used pool size of each pool
-    size_t msiz;              // max pool size of each pool
-    struct mpool_t *head;     // memory pool's head
+    mpool_pool_t   *pool;     // memory pool field
     struct mpool_t *next;     // next memory pool's pointer
 } mpool_t;
 
-mpool_t *mpool_create(size_t siz);
-mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz);
-void mpool_destroy(mpool_t *p);
+typedef struct mpool_manager_t {
+    mpool_t      *head;       // memory pool's head
+    mpool_pool_t *begin;      // data for internal conduct
+    size_t        usiz;       // used pool size of each pool
+    size_t        msiz;       // max pool size of each pool
+} mpool_manager_t;
+
+mpool_t *mpool_create(size_t siz, mpool_manager_t *manager);
+mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz, mpool_manager_t *manager);
+void mpool_destroy (mpool_manager_t *manager);
 
 #endif
 
