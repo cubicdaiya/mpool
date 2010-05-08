@@ -120,7 +120,7 @@ static inline size_t mpool_align(size_t siz) {
 }
 
 /**
- * detect mpool size
+ * decide mpool size
  */
 static inline size_t mpool_decide_create_siz(size_t siz) {
     return siz <= 0 ? MPOOL_POOL_SIZ : mpool_align(siz);
