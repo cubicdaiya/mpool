@@ -57,27 +57,25 @@
         (p) = NULL;                             \
     } while(false)
 
-typedef void mpool_pool_t;
-
 /**
  * memory pool structure
  */
-typedef struct mpool_t {
-    mpool_pool_t   *pool;     // memory pool field
-    struct mpool_t *next;     // next memory pool's pointer
-} mpool_t;
+typedef struct mpool_pool_t {
+    void                *pool;     // memory pool field
+    struct mpool_pool_t *next;     // next memory pool's pointer
+} mpool_pool_t;
 
-typedef struct mpool_manager_t {
-    mpool_t      *head;       // memory pool's head
-    mpool_pool_t *begin;      // data for internal conduct
+typedef struct mpool_t {
+    mpool_pool_t *head;       // memory pool's head
+    void         *begin;      // data for internal conduct
     size_t        usiz;       // used pool size of current pool
     size_t        msiz;       // max pool size of current pool
-    mpool_t      *mpool;      // memory pool struct's pointer
-} mpool_manager_t;
+    mpool_pool_t *mpool;      // memory pool struct's pointer
+} mpool_t;
 
-bool mpool_create (size_t siz, mpool_manager_t *manager);
-mpool_pool_t *mpool_alloc(size_t siz, mpool_manager_t *manager);
-void mpool_destroy (mpool_manager_t *manager);
+bool mpool_create (size_t siz, mpool_t *pool);
+void *mpool_alloc(size_t siz, mpool_t *pool);
+void mpool_destroy (mpool_t *pool);
 
 #endif
 
