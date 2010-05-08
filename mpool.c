@@ -45,13 +45,15 @@ static inline size_t mpool_decide_create_siz(size_t siz);
 /**
  * create memory pool
  */
-bool mpool_create (size_t siz, mpool_t *pool) {
+mpool_t *mpool_create (size_t siz) {
+    mpool_t *pool;
     siz = mpool_decide_create_siz(siz);
+    MPOOL_MALLOC(pool,              sizeof(mpool_t));
     MPOOL_MALLOC(pool->mpool,       sizeof(mpool_pool_t));
     MPOOL_MALLOC(pool->mpool->pool, siz);
     
     if (!pool->mpool || !pool->mpool->pool) {
-        return false;
+        return NULL;
     }
     
     pool->mpool->next = NULL;
@@ -61,7 +63,7 @@ bool mpool_create (size_t siz, mpool_t *pool) {
     pool->usiz  = 0;
     pool->msiz  = siz;
     
-    return true;
+    return pool;
 }
 
 /**
@@ -98,6 +100,7 @@ void mpool_destroy (mpool_t *pool) {
         MPOOL_FREE(current);
         p = next;
     }
+    MPOOL_FREE(pool);
 }
 
 /* following is private function */ 

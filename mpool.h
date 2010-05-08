@@ -70,10 +70,10 @@ typedef struct mpool_t {
     void         *begin;      // data for internal conduct
     size_t        usiz;       // used pool size of current pool
     size_t        msiz;       // max pool size of current pool
-    mpool_pool_t *mpool;      // memory pool struct's pointer
+    mpool_pool_t *mpool;      // memory pool
 } mpool_t;
 
-bool mpool_create (size_t siz, mpool_t *pool);
+mpool_t *mpool_create (size_t siz);
 void *mpool_alloc(size_t siz, mpool_t *pool);
 void mpool_destroy (mpool_t *pool);
 
