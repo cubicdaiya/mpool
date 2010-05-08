@@ -72,10 +72,11 @@ typedef struct mpool_manager_t {
     mpool_pool_t *begin;      // data for internal conduct
     size_t        usiz;       // used pool size of current pool
     size_t        msiz;       // max pool size of current pool
+    mpool_t      *mpool;      // memory pool struct's pointer
 } mpool_manager_t;
 
-mpool_t *mpool_create(size_t siz, mpool_manager_t *manager);
-mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz, mpool_manager_t *manager);
+bool mpool_create (size_t siz, mpool_manager_t *manager);
+mpool_pool_t *mpool_alloc(size_t siz, mpool_manager_t *manager);
 void mpool_destroy (mpool_manager_t *manager);
 
 #endif

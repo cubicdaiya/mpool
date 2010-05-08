@@ -45,25 +45,30 @@ static inline size_t mpool_decide_create_siz(size_t siz);
 /**
  * create memory pool
  */
-mpool_t *mpool_create (size_t siz, mpool_manager_t *manager) {
+bool mpool_create (size_t siz, mpool_manager_t *manager) {
     siz = mpool_decide_create_siz(siz);
-    mpool_t *p;
-    MPOOL_MALLOC(p, sizeof(mpool_t));
-    MPOOL_MALLOC(p->pool, siz);
-    p->next = NULL;
+    MPOOL_MALLOC(manager->mpool,       sizeof(mpool_t));
+    MPOOL_MALLOC(manager->mpool->pool, siz);
+    
+    if (!manager->mpool || !manager->mpool->pool) {
+        return false;
+    }
+    
+    manager->mpool->next = NULL;
 
-    manager->begin = p->pool;
-    manager->head  = p;
+    manager->begin = manager->mpool->pool;
+    manager->head  = manager->mpool;
     manager->usiz  = 0;
     manager->msiz  = siz;
     
-    return p;
+    return true;
 }
 
 /**
  * allocate memory from memory pool
  */
-mpool_pool_t *mpool_alloc(mpool_t **p, size_t siz, mpool_manager_t *manager) {
+mpool_pool_t *mpool_alloc(size_t siz, mpool_manager_t *manager) {
+    mpool_t **p = &manager->mpool;
     mpool_t *pp = *p;
     size_t usiz = mpool_align(manager->usiz + siz);
     size_t msiz = manager->msiz;
