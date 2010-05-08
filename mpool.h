@@ -40,8 +40,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MPOOL_POOL_SIZ (64 * 1024)
-#define MPOOL_ALIGN_SIZE   (8)
+#define MPOOL_POOL_SIZ   (64 * 1024)
+#define MPOOL_ALIGN_SIZE (8)
 
 #define MPOOL_MALLOC(p, siz)                    \
     do {                                        \
