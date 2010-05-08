@@ -38,6 +38,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 #define MPOOL_POOL_SIZ   (64 * 1024)

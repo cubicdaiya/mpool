@@ -48,9 +48,10 @@ static inline size_t mpool_decide_create_siz(size_t siz);
 mpool_t *mpool_create (size_t siz) {
     mpool_t *pool;
     siz = mpool_decide_create_siz(siz);
-    MPOOL_MALLOC(pool,              sizeof(mpool_t));
-    MPOOL_MALLOC(pool->mpool,       sizeof(mpool_pool_t));
+    MPOOL_MALLOC(pool,              sizeof(*pool));
+    MPOOL_MALLOC(pool->mpool,       sizeof(*pool->mpool));
     MPOOL_MALLOC(pool->mpool->pool, siz);
+    memset(pool->mpool->pool, 0, siz);
     
     if (!pool->mpool || !pool->mpool->pool) {
         return NULL;
@@ -111,8 +112,10 @@ void mpool_destroy (mpool_t *pool) {
 static inline void mpool_extend(mpool_pool_t *p, size_t siz, mpool_t *pool) {
     siz = mpool_decide_create_siz(siz);
     mpool_pool_t *pp;
-    MPOOL_MALLOC(pp, sizeof(mpool_pool_t));
+    MPOOL_MALLOC(pp, sizeof(*pp));
     MPOOL_MALLOC(pp->pool, siz);
+    memset(pp->pool, 0, siz);
+    
     pp->next = NULL;
 
     p->next = pp;
