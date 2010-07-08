@@ -52,12 +52,14 @@
         }                                       \
     } while(false)
 
-#define MPOOL_FREE(p)                           \
-    do {                                        \
-        free(p);                                \
-        (p) = NULL;                             \
+#define MPOOL_FREE(p)                                   \
+    do {                                                \
+        if (p != NULL) {                                \
+            free(p);                                    \
+            (p) = NULL;                                 \
+        }                                               \
     } while(false)
-
+      
 /**
  * memory pool structure
  */
