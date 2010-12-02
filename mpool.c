@@ -78,7 +78,8 @@ void *mpool_alloc(size_t siz, mpool_t *pool) {
     void     *d = pool->begin;
     if (usiz > msiz) {
         mpool_extend(pp, usiz * 2, pool);
-        pool->usiz = usiz;
+        pool->usiz = 0;
+        pool->msiz = usiz * 2;
         d = pool->begin;
         pool->begin += mpool_align(siz);
         *p = pp->next;
