@@ -1,0 +1,8 @@
+target  = 'mpool_test'
+sources = [Glob('*.c'), Glob('../*.c')]
+env = Environment(CPPFLAGS=['-Wall', '-g', '-O2', '-std=c99'],
+                  LIBS=['cunit'],
+                  CPPPATH='..')
+test = env.Program(target, sources)
+test_alias = env.Alias('check', test, test[0].abspath)
+env.AlwaysBuild(test_alias)
