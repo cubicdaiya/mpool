@@ -38,7 +38,7 @@
 /**
  * private function
  */
-static inline void mpool_extend(mpool_pool_t *p, size_t siz, mpool_t *pool);
+static inline bool mpool_extend(mpool_pool_t *p, size_t siz, mpool_t *pool);
 static inline size_t mpool_align(size_t siz);
 static inline size_t mpool_decide_create_siz(size_t siz);
 
@@ -48,15 +48,22 @@ static inline size_t mpool_decide_create_siz(size_t siz);
 mpool_t *mpool_create (size_t siz) {
     mpool_t *pool;
     siz = mpool_decide_create_siz(siz);
-    MPOOL_MALLOC(pool,              sizeof(*pool));
-    MPOOL_MALLOC(pool->mpool,       sizeof(*pool->mpool));
-    MPOOL_MALLOC(pool->mpool->pool, siz);
-    memset(pool->mpool->pool, 0, siz);
-    
-    if (!pool->mpool || !pool->mpool->pool) {
+
+    pool = malloc(sizeof(*pool));
+    if (pool == NULL) {
         return NULL;
     }
-    
+
+    pool->mpool = malloc(sizeof(*pool->mpool));
+    if (pool->mpool == NULL) {
+        return NULL;
+    }
+
+    pool->mpool->pool = malloc(siz);
+    if (pool->mpool->pool == NULL) {
+        return NULL;
+    }
+
     pool->mpool->next = NULL;
 
     pool->begin = pool->mpool->pool;
@@ -77,7 +84,9 @@ void *mpool_alloc(size_t siz, mpool_t *pool) {
     size_t msiz = pool->msiz;
     void     *d = pool->begin;
     if (usiz > msiz) {
-        mpool_extend(pp, usiz * 2 + 1, pool);
+        if (!mpool_extend(pp, usiz * 2 + 1, pool)) {
+            return NULL;
+        }
         pool->usiz = 0;
         pool->msiz = usiz * 2;
         d = pool->begin;
@@ -110,11 +119,20 @@ void mpool_destroy (mpool_t *pool) {
 /**
  * extend memory pool
  */
-static inline void mpool_extend(mpool_pool_t *p, size_t siz, mpool_t *pool) {
+static inline bool mpool_extend(mpool_pool_t *p, size_t siz, mpool_t *pool) {
     siz = mpool_decide_create_siz(siz);
     mpool_pool_t *pp;
-    MPOOL_MALLOC(pp, sizeof(*pp));
-    MPOOL_MALLOC(pp->pool, siz);
+
+    pp = malloc(sizeof(*pp));
+    if (pp == NULL) {
+        return false;
+    }
+
+    pp->pool = malloc(siz);
+    if (pp->pool == NULL) {
+        return false;
+    }
+
     memset(pp->pool, 0, siz);
     
     pp->next = NULL;
@@ -122,6 +140,8 @@ static inline void mpool_extend(mpool_pool_t *p, size_t siz, mpool_t *pool) {
     p->next = pp;
 
     pool->begin = pp->pool;
+
+    return true;
 }
 
 /**

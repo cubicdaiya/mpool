@@ -44,14 +44,6 @@
 #define MPOOL_POOL_SIZ   (64 * 1024)
 #define MPOOL_ALIGN_SIZE (8)
 
-#define MPOOL_MALLOC(p, siz)                    \
-    do {                                        \
-        if (((p) = malloc(siz)) == NULL) {      \
-            fprintf(stderr, "malloc failed");   \
-            exit(-1);                           \
-        }                                       \
-    } while(false)
-
 #define MPOOL_FREE(p)                                   \
     do {                                                \
         if (p != NULL) {                                \
