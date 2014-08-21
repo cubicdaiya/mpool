@@ -2,6 +2,7 @@
 *.o
 *.so
 *.a
+*.dylib
 test/mpool_test
 GPATH
 GTAGS
