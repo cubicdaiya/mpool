@@ -104,13 +104,12 @@ void *mpool_alloc(size_t siz, mpool_t *pool) {
  * release all memory pool
  */
 void mpool_destroy (mpool_t *pool) {
-    for (mpool_pool_t *p=pool->head;p!=NULL;) {
-        mpool_pool_t *current = p;
-        mpool_pool_t *next    = p->next;
-        MPOOL_FREE(current->pool);
-        MPOOL_FREE(current);
-        p = next;
+    for (mpool_pool_t *cur = pool->head, *next; cur; cur = next){
+        next = cur->next;
+        MPOOL_FREE(cur->pool);
+        MPOOL_FREE(cur);
     }
+    
     MPOOL_FREE(pool);
 }
 
